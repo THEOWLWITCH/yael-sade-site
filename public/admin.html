@@ -13,6 +13,7 @@
   <script src="site-data.js"></script>
   <script src="site.js"></script>
   <style>
+    :root{--blue:#4b1d64}
     body{font-size:16px}
     .adm-top{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line)}
     .adm-top .wrap{max-width:1180px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;min-height:60px}
@@ -44,7 +45,7 @@
     .hint{font-size:.85rem;color:var(--muted);margin:4px 0 0}
     .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
     .row.end{justify-content:flex-end}
-    .items{display:flex;flex-direction:column;gap:12px}
+    .items{display:flex;flex-direction:column;gap:12px;align-items:stretch}
     .it{border:1px solid var(--line);border-radius:12px;background:#fdfcfa}
     .it.off{opacity:.65;border-style:dashed}
     .it-h{display:flex;align-items:center;gap:6px;padding:8px 10px}
@@ -278,7 +279,7 @@
       var t = TYPE[it.type] || TYPE.text, isOpen = !!open[it.id];
       h += '<div class="it' + (it.hidden ? ' off' : '') + '">' +
         '<div class="it-h"><span aria-hidden="true">' + t.icon + '</span>' +
-        '<button class="t" data-open="' + esc(it.id) + '" aria-expanded="' + isOpen + '">' + esc(it.title || '(בלי כותרת)') + ' <span class="k">· ' + t.name + (it.hidden ? ' · טיוטה, לא מוצג' : '') + '</span></button>' +
+        '<button class="t" data-open="' + esc(it.id) + '" aria-expanded="' + isOpen + '">' + esc(it.title || String(it.body || '').split('\n')[0].replace(/\*\*/g, '').slice(0, 70) || (it.file && it.file.name) || '(בלי כותרת)') + ' <span class="k">· ' + t.name + (it.hidden ? ' · טיוטה, לא מוצג' : '') + '</span></button>' +
         '<button class="ic" data-move="' + i + ':-1" aria-label="להזיז למעלה"' + (i ? '' : ' disabled') + '>↑</button>' +
         '<button class="ic" data-move="' + i + ':1" aria-label="להזיז למטה"' + (i < p.items.length - 1 ? '' : ' disabled') + '>↓</button>' +
         '<button class="ic" data-hide="' + i + '" title="' + (it.hidden ? 'להציג באתר' : 'להסתיר מהאתר') + '">' + (it.hidden ? '👁 הצגה' : '🙈 הסתרה') + '</button>' +

@@ -123,7 +123,8 @@
       (page.hidden && opt.preview ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</header>';
     if (page.intro) html += '<section class="intro rich">' + rich(page.intro) + '</section>';
     html += '<div class="items">' + items.map(function (it) { return item(it, opt); }).join('') + '</div>';
-    if (page.id === 'about' || page.id === 'contact') html += inviteCard(b);
+    // כרטיס ההזמנה בצבעי מים שייך למסלולים (31/10/2026: "התמונה הזאת קשורה למסלולים")
+    if (page.id === 'neuro' || page.id === 'contact') html += inviteCard(b);
     return html;
   }
 

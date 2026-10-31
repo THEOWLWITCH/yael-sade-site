@@ -17,7 +17,7 @@
   <a class="skip" href="#main">מעבר לתוכן</a>
   <header class="top">
     <div class="wrap">
-      <a class="brand" href="#/" id="brand"></a>
+      <a class="brand" href="/" id="brand"></a>
       <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="nav">☰ תפריט</button>
       <nav class="main" id="nav" aria-label="דפי האתר"></nav>
     </div>
@@ -28,14 +28,18 @@
   </footer>
 <script>
 (function () {
-  var site = window.YS_DEFAULT;
+  // כתובת ישנה עם #/ עוברת לכתובת האמיתית
+  var old = (location.hash.match(/^#\/([\w-]*)/) || [])[1];
+  if (old != null) { location.replace('/' + old); return; }
+  // השרת שולח את התוכן השמור בתוך הדף (window.YS_SITE), כדי שגוגל יקרא אותו
+  var site = window.YS_SITE || window.YS_DEFAULT;
   var $ = function (id) { return document.getElementById(id); };
   // קישור לניהול רק במכשיר שנכנס לניהול (31/10/2026: "הקישור לניהול יהיה מתוך התפריט ורק אני אראה אותו")
   var adminLink = function () {
     var t = ''; try { t = localStorage.getItem('ys.admin.token') || sessionStorage.getItem('ys.admin.token') || ''; } catch (e) {}
     return t ? '<a class="adm" href="/admin">⚙ ניהול</a>' : '';
   };
-  var current = function () { return decodeURIComponent((location.hash.match(/^#\/([\w-]+)/) || [])[1] || ''); };
+  var current = function () { return decodeURIComponent((location.pathname.match(/^\/([\w-]+)/) || [])[1] || ''); };
 
   function draw(scroll) {
     var b = site.brand || {}, id = current();
@@ -57,8 +61,8 @@
     var open = $('nav').classList.toggle('open');
     this.setAttribute('aria-expanded', open ? 'true' : 'false');
   });
-  window.addEventListener('hashchange', function () { draw(true); });
-  // התוכן השמור מהניהול. בלי חיבור (או אחרי שתי שניות): תוכן הפתיחה.
+  if (window.YS_SITE) { draw(false); return; }
+  // בלי השרת (למשל קובץ מקומי): התוכן השמור מהניהול, או אחרי שתי שניות תוכן הפתיחה.
   var done = false, show = function () { if (!done) { done = true; draw(false); } };
   var timer = setTimeout(show, 2000);
   fetch('/api/site', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {

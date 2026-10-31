@@ -84,6 +84,8 @@
     return rows.length ? '<div class="contact">' + rows.join('') + '</div>' : '';
   }
 
+  // כתובת אמיתית לכל דף (/, /neuro, /about), כדי שגוגל יראה כל דף בנפרד
+  var pageHref = function (p) { return p.home ? '/' : '/' + p.id; };
   var phoneDigits = function (p) { return String(p || '').replace(/[^\d]/g, ''); };
 
   // site: מבנה התוכן; pageId: הדף להצגה; opt.preview: להראות גם טיוטות
@@ -106,7 +108,7 @@
         (b.tagline ? '<p class="tagline">' + esc(b.tagline) + '</p>' : '') + '</section>';
       html += '<section class="areas">' + areas.map(function (p, i) {
         var sum = String(p.summary || p.sub || '').split('\n').filter(Boolean).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
-        return '<a class="area c' + (i % 3) + '" style="--i:' + i + '" href="#/' + esc(p.id) + '">' +
+        return '<a class="area c' + (i % 3) + '" style="--i:' + i + '" href="' + esc(pageHref(p)) + '">' +
           '<span class="orb">' + (p.icon ? '<img src="' + esc(fileUrl(p.icon)) + '" alt="">' : '') + '</span>' +
           '<b>' + esc(p.nav || p.title) + '</b><span class="sum">' + sum + '</span>' + (p.hidden ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</a>';
       }).join('') + '</section>';
@@ -138,9 +140,9 @@
 
   function nav(site, current, opt) {
     return (site.pages || []).filter(function (p) { return (opt && opt.preview) || !p.hidden; }).map(function (p) {
-      return '<a href="#/' + esc(p.id) + '"' + (p.id === current ? ' aria-current="page"' : '') + '>' + esc(p.nav || p.title) + '</a>';
+      return '<a href="' + esc(pageHref(p)) + '"' + (p.id === current ? ' aria-current="page"' : '') + '>' + esc(p.nav || p.title) + '</a>';
     }).join('');
   }
 
-  window.YS = { esc: esc, rich: rich, renderPage: renderPage, nav: nav, contactCard: contactCard, inviteCard: inviteCard, fileUrl: fileUrl, video: video, kb: kb };
+  window.YS = { pageHref: pageHref, esc: esc, rich: rich, renderPage: renderPage, nav: nav, contactCard: contactCard, inviteCard: inviteCard, fileUrl: fileUrl, video: video, kb: kb };
 })();

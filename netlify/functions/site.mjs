@@ -66,6 +66,8 @@ export function cleanSite(s) {
     name: line(b.name, 80), title: line(b.title, 160), tagline: line(b.tagline, 240),
     email: line(b.email, 120), phone: line(b.phone, 40), photo: cleanFile(b.photo), logo: cleanFile(b.logo),
     invite: text(b.invite, 400), footer: line(b.footer, 240),
+    // קוד האימות של Google Search Console (רק הקוד, בלי התגית)
+    gsc: (String(b.gsc || '').match(/content="([^"]+)"/) || [, String(b.gsc || '')])[1].trim().replace(/[^\w-]/g, '').slice(0, 100),
   };
   const seen = new Set();
   const pages = (Array.isArray(s.pages) ? s.pages : []).slice(0, 30).map((p) => {

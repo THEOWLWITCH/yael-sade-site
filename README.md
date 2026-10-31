@@ -22,8 +22,15 @@
 
 ## קבצים
 
-- `public/index.html`: האתר. `public/site.js`: הצגת הדפים. `public/site.css`: העיצוב.
+- `public/shell.html`: תבנית הדף. `netlify/functions/page.mjs` ממלא אותה בתוכן לכל כתובת (`/`, `/neuro`, `/courses`, `/research`, `/about`), עם כותרת ותיאור לגוגל, ומגיש גם `/sitemap.xml` ו-`/robots.txt`. `public/site.js`: הצגת הדפים. `public/site.css`: העיצוב.
 - `public/site-data.js`: תוכן הפתיחה לפי העיצוב ב-Canva (בלי הורות קשובה), עד השמירה הראשונה בניהול.
 - `public/img/`: התמונות והסמלים מהעיצוב ב-Canva.
 - `public/admin.html`: הניהול.
 - `netlify/functions/site.mjs`: שמירה, קבצים וכניסה (`/api/site`, `/api/file`). בדיקות: `npm test` (`tests/site.test.mjs`).
+
+## גוגל
+
+- כל דף בכתובת משלו, והתוכן כבר בתוך ה-HTML (גוגל קורא אותו בלי להריץ סקריפטים), עם כותרת, תיאור, קישור קנוני ופרטי האדם (JSON-LD) בדף הבית.
+- מפת האתר: `/sitemap.xml`, נבנית לבד מהדפים הגלויים.
+- **Google Search Console:** מוסיפים את האתר (Add property ← URL prefix), בוחרים אימות "HTML tag", מדביקים את התגית בניהול (⚙ פרטים כלליים ← "קוד אימות של Google Search Console"), שמירה ופרסום, ואז "Verify". אחר כך: Sitemaps ← `sitemap.xml` ← Submit.
+- אחרי חיבור דומיין חדש: לקבוע אותו כ-Primary domain ב-Netlify (הכתובת הקנונית נלקחת ממנו), ולהוסיף אותו גם ב-Search Console.

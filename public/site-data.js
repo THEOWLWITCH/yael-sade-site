@@ -76,9 +76,8 @@ window.YS_DEFAULT = {
         { id: 'r-pubs', type: 'text', title: 'פירסומים אקדמיים',
           body: 'שדה, י׳ (2024). From community resilience to a resilient community: A new approach to developing a social mechanism-based approach to community resilience. עבודת דוקטורט, אוניברסיטת אריאל.' },
         { id: 'r-books', type: 'text', title: 'ספרים', hidden: true, body: '[כאן אפשר להוסיף ספרים: שם, שנה, הוצאה וקישור או קובץ]' },
-        { id: 'r-games', type: 'link', title: 'משחקים ופעילויות',
-          body: 'משחקים, כלים ופעילויות לחוסן חברתי ולמוכנות, לבתי ספר, לארגונים ולקהילות, ב-Begood.',
-          url: 'https://be-good.co.il/about.html', label: 'ל-Begood' }
+        { id: 'r-games', type: 'text', title: 'משחקים ופעילויות', hidden: true,
+          body: '[כאן אפשר להוסיף משחקים ופעילויות: שם, למי, ותמונה, קובץ או קישור]' }
       ]
     },
     {

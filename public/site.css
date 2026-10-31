@@ -1,6 +1,6 @@
 /* האתר האישי של ד״ר יעל שדה, לפי העיצוב ב-Canva: רקע אפור-תכלת בהיר, כרטיסים לבנים מעוגלים,
    טקסט סגול עמוק, סמלים עגולים בצבעי מים, ומספר הטלפון בכתב יד. */
-:root{--ink:#3d2453;--purple:#4b1d64;--muted:#6c5a7c;--bg:#eceff3;--card:#fff;--line:#e2dde8;--teal:#2f9c9a;--radius:22px}
+:root{--ink:#3d2453;--purple:#4b1d64;--muted:#6c5a7c;--bg:#eceff3;--card:#fff;--line:#e2dde8;--teal:#466f6d;--radius:22px}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:Assistant,system-ui,sans-serif;font-size:18px;line-height:1.75;color:var(--ink);background:var(--bg)}

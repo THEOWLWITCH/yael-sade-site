@@ -299,7 +299,9 @@
       '<label class="f">הסמל (הפרח)</label>' + fileBox(b.logo, 'brand.logo', true) +
       fld('הזמנה בכרטיס בצבעי מים (בדף אודות)', 'brand.invite', b.invite, { area: true, rows: 2 }) +
       fld('מייל', 'brand.email', b.email, { ltr: true }) + fld('טלפון', 'brand.phone', b.phone, { ltr: true, hint: 'מוצג בדף "יצירת קשר" (עם וואטסאפ) ובתחתית כל דף.' }) +
-      fld('שורה בתחתית', 'brand.footer', b.footer) + '</div>';
+      fld('שורה בתחתית', 'brand.footer', b.footer) +
+      '<div class="row" style="margin-top:18px;border-top:1px solid var(--line);padding-top:14px"><button class="red" data-act="resetAll">↺ חזרה לתוכן הפתיחה (לפי העיצוב)</button></div>' +
+      '<p class="hint">מחליף את כל הדפים והחומרים בתוכן הפתיחה. השינוי נכנס לאתר רק אחרי "שמירה ופרסום".</p></div>';
   }
 
   // ── עריכה ──
@@ -344,6 +346,10 @@
     }
     if ((a = t.getAttribute('data-rmfile'))) { setPath(a, null); mark(); drawEditor(); return; }
     if ((a = t.getAttribute('data-act'))) {
+      if (a === 'resetAll') {
+        if (!confirm('להחליף את כל התוכן בתוכן הפתיחה? מה שנשמר עד עכשיו יוחלף אחרי "שמירה ופרסום".')) return;
+        site = clone(window.YS_DEFAULT); sel = '__brand'; mark(); draw(); return;
+      }
       if (a === 'togglePage') p.hidden = !p.hidden;
       if (a === 'makeHome') { site.pages.forEach(function (q) { q.home = false; }); p.home = true; p.hidden = false; }
       if (a === 'deletePage') {

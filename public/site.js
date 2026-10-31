@@ -6,7 +6,12 @@
     if (/^(https?:\/\/|mailto:|tel:)/i.test(u) || /^#[\w-]+$/.test(u) || /^\/(?!\/)/.test(u)) return u;
     return '';
   };
-  var fileUrl = function (f) { return f && f.id ? '/api/file?id=' + encodeURIComponent(f.id) : ''; };
+  var fileUrl = function (f) {
+    if (!f) return '';
+    if (f.src) return f.src;
+    if (window.YS_FILE) return window.YS_FILE(f);
+    return f.id ? '/api/file?id=' + encodeURIComponent(f.id) : '';
+  };
 
   // **מודגש**, שורות "- " לתבליטים, "1. " לרשימה ממוספרת, שורה ריקה לפסקה, וקישורים.
   function inline(s) {
@@ -44,7 +49,7 @@
   function item(it, opt) {
     var head = (it.title ? '<h2>' + esc(it.title) + '</h2>' : '') + (it.date ? '<p class="date">' + esc(it.date) + '</p>' : '');
     var body = it.body ? '<div class="rich">' + rich(it.body) + '</div>' : '';
-    var cls = 'item it-' + it.type + (it.hidden ? ' draft' : '');
+    var cls = 'item it-' + it.type + (it.half ? ' half' : '') + (it.hidden ? ' draft' : '');
     var tag = it.hidden && opt.preview ? '<span class="draft-tag">טיוטה: לא מוצג באתר</span>' : '';
     if (it.type === 'file') {
       var u = fileUrl(it.file);
@@ -58,7 +63,8 @@
     }
     if (it.type === 'image') {
       var iu = fileUrl(it.file);
-      return '<figure class="' + cls + '">' + tag + (iu ? '<img src="' + iu + '" alt="' + esc(it.title || '') + '" loading="lazy">' : '<p class="muted">(עוד לא הועלתה תמונה)</p>') + (it.title || it.body ? '<figcaption>' + (it.title ? '<b>' + esc(it.title) + '</b>' : '') + (it.body ? rich(it.body) : '') + '</figcaption>' : '') + '</figure>';
+      var long = String(it.body || '').length > 160;
+      return '<figure class="' + cls + (long ? ' long' : '') + '">' + tag + (it.title ? '<h2>' + esc(it.title) + '</h2>' : '') + (iu ? '<img src="' + esc(iu) + '" alt="' + esc(it.title || it.body || (it.file && it.file.name) || '') + '" loading="lazy">' : '<p class="muted">(עוד לא הועלתה תמונה)</p>') + (it.body ? '<figcaption class="rich">' + rich(it.body) + '</figcaption>' : '') + '</figure>';
     }
     if (it.type === 'video') {
       var v = video(it.url);
@@ -78,6 +84,8 @@
     return rows.length ? '<div class="contact">' + rows.join('') + '</div>' : '';
   }
 
+  var phoneDigits = function (p) { return String(p || '').replace(/[^\d]/g, ''); };
+
   // site: מבנה התוכן; pageId: הדף להצגה; opt.preview: להראות גם טיוטות
   function renderPage(site, pageId, opt) {
     opt = opt || {};
@@ -87,25 +95,42 @@
     if (!page) return '';
     var b = site.brand || {};
     var items = (page.items || []).filter(function (it) { return opt.preview || !it.hidden; });
+    var about = pages.filter(function (p) { return p.id === 'about'; })[0];
     var html = '';
     if (page.home) {
-      var photo = b.photo ? '<img class="portrait" src="' + fileUrl(b.photo) + '" alt="' + esc(b.name) + '">' : '<div class="portrait mono" aria-hidden="true">' + esc(String(b.name || '').replace(/^ד״ר\s*/, '').slice(0, 1)) + '</div>';
-      html += '<section class="hero">' + photo + '<div><p class="eyebrow">' + esc(b.title) + '</p><h1>' + esc(b.name) + '</h1>' + (b.tagline ? '<p class="tagline">' + esc(b.tagline) + '</p>' : '') + '</div></section>';
+      html += '<div class="home"><aside class="who">' +
+        '<h1>' + esc(b.name) + '</h1>' + (b.title ? '<p class="motto">' + esc(b.title) + '</p>' : '') +
+        (b.logo ? '<img class="logo" src="' + esc(fileUrl(b.logo)) + '" alt="">' : '') +
+        (b.photo ? '<img class="portrait" src="' + esc(fileUrl(b.photo)) + '" alt="' + esc(b.name) + '">' : '') +
+        (about ? '<a class="pill" href="#/' + esc(about.id) + '">' + esc(about.nav || about.title) + '</a>' : '') +
+        (b.phone ? '<a class="hand" href="tel:' + phoneDigits(b.phone) + '" dir="ltr">' + esc(b.phone) + '</a>' : '') +
+        (b.email ? '<a class="mail" href="mailto:' + esc(b.email) + '" dir="ltr">' + esc(b.email) + '</a>' : '') +
+        '</aside><section class="cards">' + pages.filter(function (p) { return !p.home && p !== about; }).map(function (p) {
+          var sum = String(p.summary || p.sub || '').split('\n').filter(Boolean).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
+          return '<a class="card" href="#/' + esc(p.id) + '">' + (p.icon ? '<img src="' + esc(fileUrl(p.icon)) + '" alt="">' : '') +
+            '<b>' + esc(p.nav || p.title) + '</b>' + sum + (p.hidden ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</a>';
+        }).join('') + '</section></div>';
       if (page.intro) html += '<section class="intro rich">' + rich(page.intro) + '</section>';
-      html += items.map(function (it) { return item(it, opt); }).join('');
-      var others = pages.filter(function (p) { return !p.home; });
-      if (others.length) html += '<section class="cards">' + others.map(function (p) {
-        var first = String(p.intro || '').split('\n')[0];
-        if (first.length > 150) first = first.slice(0, 147).replace(/\s+\S*$/, '') + '…';
-        return '<a class="card" href="#/' + esc(p.id) + '"><b>' + esc(p.title) + '</b>' + (first ? '<span>' + esc(first) + '</span>' : '') + '<i>←</i></a>';
-      }).join('') + '</section>';
-    } else {
-      html += '<header class="page-head"><h1>' + esc(page.title) + '</h1>' + (page.hidden && opt.preview ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</header>';
-      if (page.intro) html += '<section class="intro rich">' + rich(page.intro) + '</section>';
-      if (page.id === 'contact') html += contactCard(b);
-      html += items.map(function (it) { return item(it, opt); }).join('');
+      if (items.length) html += '<div class="items">' + items.map(function (it) { return item(it, opt); }).join('') + '</div>';
+      return html;
     }
+    var pic = page.id === 'about' && b.photo ? '<img class="head-photo" src="' + esc(fileUrl(b.photo)) + '" alt="">' : '';
+    var icon = page.icon ? page.icon : (page.id === 'about' ? b.logo : null);
+    html += '<header class="page-head">' + pic + (icon ? '<img class="head-icon" src="' + esc(fileUrl(icon)) + '" alt="">' : '') +
+      '<div><h1>' + esc(page.title) + '</h1>' + (page.sub ? '<p class="sub">' + esc(page.sub) + '</p>' : '') + '</div>' +
+      (page.hidden && opt.preview ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</header>';
+    if (page.intro) html += '<section class="intro rich">' + rich(page.intro) + '</section>';
+    html += '<div class="items">' + items.map(function (it) { return item(it, opt); }).join('') + '</div>';
+    if (page.id === 'about' || page.id === 'contact') html += inviteCard(b);
     return html;
+  }
+
+  function inviteCard(b) {
+    if (!b.invite && !b.phone) return '';
+    return '<section class="invite">' + (b.invite ? '<p class="inv-t">' + esc(b.invite).replace(/\n/g, '<br>') + '</p>' : '') +
+      '<span class="inv-gap"></span>' +
+      (b.phone ? '<a href="tel:' + phoneDigits(b.phone) + '" dir="ltr">' + esc(b.phone) + '</a>' : '') +
+      (b.email ? '<a class="inv-mail" href="mailto:' + esc(b.email) + '" dir="ltr">' + esc(b.email) + '</a>' : '') + '</section>';
   }
 
   function nav(site, current, opt) {
@@ -114,5 +139,5 @@
     }).join('');
   }
 
-  window.YS = { esc: esc, rich: rich, renderPage: renderPage, nav: nav, contactCard: contactCard, fileUrl: fileUrl, video: video, kb: kb };
+  window.YS = { esc: esc, rich: rich, renderPage: renderPage, nav: nav, contactCard: contactCard, inviteCard: inviteCard, fileUrl: fileUrl, video: video, kb: kb };
 })();

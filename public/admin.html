@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="robots" content="noindex">
   <title>ניהול האתר · ד״ר יעל שדה</title>
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/img/logo-flower.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Assistant:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Gochi+Hand&display=swap">
   <link rel="stylesheet" href="site.css">
   <script src="site-data.js"></script>
   <script src="site.js"></script>
@@ -228,7 +228,7 @@
   function fileBox(f, key, isImg) {
     var u = f ? YS.fileUrl(f) : '';
     return '<div class="filebox">' +
-      (f ? (isImg ? '<img src="' + u + '" alt="">' : '') + '<span>' + esc(f.name) + ' · ' + YS.kb(f.size) + '</span> <a href="' + u + '" target="_blank" rel="noopener">פתיחה</a>' : '<span class="muted">עוד לא נבחר ' + (isImg ? 'תמונה' : 'קובץ') + '</span>') +
+      (f ? (isImg ? '<img src="' + esc(u) + '" alt="">' : '') + '<span>' + esc(f.name || '') + (f.size ? ' · ' + YS.kb(f.size) : '') + '</span> <a href="' + esc(u) + '" target="_blank" rel="noopener">פתיחה</a>' : '<span class="muted">עוד לא נבחר ' + (isImg ? 'תמונה' : 'קובץ') + '</span>') +
       '<label class="b" style="margin-inline-start:auto">' + (f ? 'החלפה' : 'בחירה והעלאה') + '<input type="file" hidden data-up="' + key + '" accept="' + (isImg ? '.jpg,.jpeg,.png,.webp,.gif' : ACCEPT) + '"></label>' +
       (f ? '<button class="ic" data-rmfile="' + key + '">הסרה</button>' : '') +
       '</div><p class="hint">עד 4 מגה. קובץ גדול יותר: מעלים ל-Google Drive ומוסיפים "🔗 קישור".</p>';
@@ -243,6 +243,7 @@
     if (it.type === 'video') h += fld('קישור לסרטון', k + 'url', it.url, { type: 'url', ltr: true, ph: 'https://www.youtube.com/watch?v=…', hint: 'YouTube או Vimeo: הסרטון יוצג בתוך הדף.' });
     h += fld(it.type === 'image' ? 'כיתוב מתחת לתמונה' : 'טקסט', k + 'body', it.body, { area: true, rows: it.type === 'text' ? 8 : 4, small: it.type === 'text' ? '' : '(רשות)', hint: FMT });
     h += fld('תאריך', k + 'date', it.date, { small: '(רשות)', ph: 'למשל: אוקטובר 2026' });
+    h += '<label class="chk"><input type="checkbox" data-chk="' + k + 'half"' + (it.half ? ' checked' : '') + '> חצי רוחב (שני פריטים זה לצד זה)</label>';
     return h;
   }
 
@@ -258,7 +259,12 @@
     }
     h += '<div class="panel"><h2>' + (p.home ? '🏠 ' : '') + esc(p.title) + '</h2>';
     h += fld('שם הדף', 'title', p.title);
-    h += fld('השם בתפריט', 'nav', p.nav, { small: '(רשות, קצר)' });
+    h += fld('השם בתפריט ובכרטיס בדף הבית', 'nav', p.nav, { small: '(רשות, קצר)' });
+    if (!p.home) {
+      h += fld('תת-כותרת', 'sub', p.sub, { small: '(רשות)' });
+      h += fld('הטקסט בכרטיס בדף הבית', 'summary', p.summary, { area: true, rows: 3, small: '(שורה לכל נושא)' });
+      h += '<label class="f">הסמל של הדף <small>(עיגול בכרטיס ובראש הדף)</small></label>' + fileBox(p.icon, 'icon', true);
+    }
     h += fld(p.home ? 'פתיחה בדף הבית' : 'פתיחה', 'intro', p.intro, { area: true, rows: 5, hint: FMT });
     h += '<div class="row" style="margin-top:14px">';
     if (!p.home) h += '<button class="ic" data-act="togglePage">' + (p.hidden ? '👁 להציג את הדף באתר' : '🙈 להסתיר את הדף מהאתר') + '</button>';
@@ -287,8 +293,10 @@
   function drawBrand() {
     var b = site.brand;
     $('editor').innerHTML = '<div class="panel"><h2>⚙ פרטים כלליים</h2>' +
-      fld('השם', 'brand.name', b.name) + fld('תואר בשורה אחת', 'brand.title', b.title) + fld('משפט מוביל בדף הבית', 'brand.tagline', b.tagline, { area: true, rows: 2 }) +
-      '<label class="f">תמונה בדף הבית <small>(רשות)</small></label>' + fileBox(b.photo, 'brand.photo', true) +
+      fld('השם', 'brand.name', b.name) + fld('שורה מתחת לשם', 'brand.title', b.title) +
+      '<label class="f">התמונה שלך <small>(דף הבית ואודות)</small></label>' + fileBox(b.photo, 'brand.photo', true) +
+      '<label class="f">הסמל (הפרח)</label>' + fileBox(b.logo, 'brand.logo', true) +
+      fld('הזמנה בכרטיס בצבעי מים (בדף אודות)', 'brand.invite', b.invite, { area: true, rows: 2 }) +
       fld('מייל', 'brand.email', b.email, { ltr: true }) + fld('טלפון', 'brand.phone', b.phone, { ltr: true, hint: 'מוצג בדף "יצירת קשר" (עם וואטסאפ) ובתחתית כל דף.' }) +
       fld('שורה בתחתית', 'brand.footer', b.footer) + '</div>';
   }
@@ -307,6 +315,8 @@
     if (k === 'title' || k === 'nav') drawPages();
   });
   $('editor').addEventListener('change', function (e) {
+    var c = e.target.getAttribute('data-chk');
+    if (c) { setPath(c, e.target.checked); mark(); return; }
     var k = e.target.getAttribute('data-up');
     if (k && e.target.files[0]) upload(e.target.files[0], function (f) { setPath(k, f); });
   });

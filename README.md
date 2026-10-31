@@ -23,6 +23,7 @@
 ## קבצים
 
 - `public/index.html`: האתר. `public/site.js`: הצגת הדפים. `public/site.css`: העיצוב.
-- `public/site-data.js`: תוכן הפתיחה, עד השמירה הראשונה בניהול.
+- `public/site-data.js`: תוכן הפתיחה לפי העיצוב ב-Canva (בלי הורות קשובה), עד השמירה הראשונה בניהול.
+- `public/img/`: התמונות והסמלים מהעיצוב ב-Canva.
 - `public/admin.html`: הניהול.
 - `netlify/functions/site.mjs`: שמירה, קבצים וכניסה (`/api/site`, `/api/file`). בדיקות: `npm test` (`tests/site.test.mjs`).

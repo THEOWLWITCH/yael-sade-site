@@ -81,4 +81,12 @@ test('cleanSite keeps one home page and only known fields; safeUrl', () => {
   assert.equal(safeUrl('mailto:a@b.co'), 'mailto:a@b.co');
   assert.equal(safeUrl('//evil.com'), '');
   assert.equal(safeUrl('data:text/html,x'), '');
+  // תמונה שמגיעה עם האתר, פריט בחצי רוחב, סמל לדף
+  const t = cleanSite({ brand: { logo: { src: '/img/logo-flower.webp' }, photo: { src: 'https://evil.com/x.png' } }, pages: [{ id: 'neuro', icon: { src: '/img/icon-neuro.webp' }, summary: 'שורה\nשורה', items: [{ id: 'abc', type: 'image', half: 1, file: { src: '/img/a.webp' } }] }] });
+  assert.equal(t.brand.logo.src, '/img/logo-flower.webp');
+  assert.equal(t.brand.photo, null);
+  assert.equal(t.pages[0].icon.src, '/img/icon-neuro.webp');
+  assert.equal(t.pages[0].summary, 'שורה\nשורה');
+  assert.equal(t.pages[0].items[0].half, true);
+  assert.equal(cleanSite({ pages: [{ icon: { src: '/img/../secret' } }] }).pages[0].icon, null);
 });

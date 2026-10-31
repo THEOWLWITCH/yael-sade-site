@@ -51,7 +51,9 @@ export function safeUrl(u) {
   return '';
 }
 
+// קובץ שהועלה (id), או תמונה שמגיעה עם האתר (src: /img/...)
 function cleanFile(f) {
+  if (f && typeof f.src === 'string' && /^\/img\/[\w.-]{1,80}$/.test(f.src)) return { src: f.src, name: line(f.name, 140) };
   if (!f || !okId(f.id)) return null;
   return { id: f.id, name: line(f.name, 140), type: line(f.type, 120), size: Math.max(0, Number(f.size) || 0) };
 }
@@ -62,7 +64,8 @@ export function cleanSite(s) {
   const b = s.brand && typeof s.brand === 'object' ? s.brand : {};
   const brand = {
     name: line(b.name, 80), title: line(b.title, 160), tagline: line(b.tagline, 240),
-    email: line(b.email, 120), phone: line(b.phone, 40), photo: cleanFile(b.photo), footer: line(b.footer, 240),
+    email: line(b.email, 120), phone: line(b.phone, 40), photo: cleanFile(b.photo), logo: cleanFile(b.logo),
+    invite: text(b.invite, 400), footer: line(b.footer, 240),
   };
   const seen = new Set();
   const pages = (Array.isArray(s.pages) ? s.pages : []).slice(0, 30).map((p) => {
@@ -76,10 +79,10 @@ export function cleanSite(s) {
         id: okId(it.id) ? it.id : newId(),
         type: ITEM_TYPES.includes(it.type) ? it.type : 'text',
         title: line(it.title, 200), body: text(it.body, 20000), url: safeUrl(it.url), label: line(it.label, 80),
-        date: line(it.date, 40), file: cleanFile(it.file), hidden: !!it.hidden,
+        date: line(it.date, 40), file: cleanFile(it.file), half: !!it.half, hidden: !!it.hidden,
       };
     });
-    return { id, title: line(p.title, 120) || 'דף', nav: line(p.nav, 40), intro: text(p.intro, 6000), hidden: !!p.hidden, home: !!p.home, items };
+    return { id, title: line(p.title, 120) || 'דף', nav: line(p.nav, 40), sub: line(p.sub, 200), summary: text(p.summary, 600), icon: cleanFile(p.icon), intro: text(p.intro, 6000), hidden: !!p.hidden, home: !!p.home, items };
   });
   if (pages.length && !pages.some((p) => p.home)) pages[0].home = true;
   let homeSeen = false;
@@ -89,8 +92,9 @@ export function cleanSite(s) {
 
 const fileIds = (site) => {
   const out = new Set();
-  if (site && site.brand && site.brand.photo) out.add(site.brand.photo.id);
-  for (const p of (site && site.pages) || []) for (const it of p.items || []) if (it.file) out.add(it.file.id);
+  const add = (f) => { if (f && f.id) out.add(f.id); };
+  if (site && site.brand) { add(site.brand.photo); add(site.brand.logo); }
+  for (const p of (site && site.pages) || []) { add(p.icon); for (const it of p.items || []) add(it.file); }
   return out;
 };
 

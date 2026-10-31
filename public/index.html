@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>ד״ר יעל שדה · חוסן חברתי</title>
-  <meta name="description" content="ד״ר יעל שדה: מחקר, הרצאות וכלים לחוסן חברתי ולמוכנות בבתי ספר, בארגונים ובקהילות.">
-  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>ד״ר יעל שדה · חוסן | קהילה | חינוך</title>
+  <meta name="description" content="ד״ר יעל שדה: תירגול נוירו-קוגניטיבי, סדנאות, קורסים והרצאות בחוסן קהילתי וחברתי, חינוך ויצירתיות, מחקר וכתיבה.">
+  <link rel="icon" href="/img/logo-flower.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700&family=Assistant:wght@400;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Gochi+Hand&display=swap">
   <link rel="stylesheet" href="site.css">
   <script src="site-data.js"></script>
   <script src="site.js"></script>
@@ -36,7 +36,8 @@
     var b = site.brand || {}, id = current();
     var pages = (site.pages || []).filter(function (p) { return !p.hidden; });
     var page = pages.filter(function (p) { return p.id === id; })[0] || pages.filter(function (p) { return p.home; })[0] || pages[0];
-    $('brand').innerHTML = YS.esc(b.name) + '<small>' + YS.esc(b.title) + '</small>';
+    $('brand').innerHTML = (b.logo ? '<img src="' + YS.esc(YS.fileUrl(b.logo)) + '" alt="">' : '') + '<span>' + YS.esc(b.name) + '<small>' + YS.esc(b.title) + '</small></span>';
+    $('main').className = 'wrap pg-' + (page ? page.id : '');
     $('nav').innerHTML = YS.nav(site, page && page.id);
     $('main').innerHTML = YS.renderPage(site, page && page.id);
     $('foot').innerHTML = '<span>' + YS.esc(b.footer || '') + '</span><span class="fill"></span>' +

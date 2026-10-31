@@ -30,6 +30,11 @@
 (function () {
   var site = window.YS_DEFAULT;
   var $ = function (id) { return document.getElementById(id); };
+  // קישור לניהול רק במכשיר שנכנס לניהול (31/10/2026: "הקישור לניהול יהיה מתוך התפריט ורק אני אראה אותו")
+  var adminLink = function () {
+    var t = ''; try { t = localStorage.getItem('ys.admin.token') || sessionStorage.getItem('ys.admin.token') || ''; } catch (e) {}
+    return t ? '<a class="adm" href="/admin">⚙ ניהול</a>' : '';
+  };
   var current = function () { return decodeURIComponent((location.hash.match(/^#\/([\w-]+)/) || [])[1] || ''); };
 
   function draw(scroll) {
@@ -38,7 +43,8 @@
     var page = pages.filter(function (p) { return p.id === id; })[0] || pages.filter(function (p) { return p.home; })[0] || pages[0];
     $('brand').innerHTML = (b.logo ? '<img src="' + YS.esc(YS.fileUrl(b.logo)) + '" alt="">' : '') + '<span>' + YS.esc(b.name) + '<small>' + YS.esc(b.title) + '</small></span>';
     $('main').className = 'wrap pg-' + (page ? page.id : '');
-    $('nav').innerHTML = YS.nav(site, page && page.id);
+    document.body.classList.toggle('is-home', !!(page && page.home));
+    $('nav').innerHTML = YS.nav(site, page && page.id) + adminLink();
     $('main').innerHTML = YS.renderPage(site, page && page.id);
     $('foot').innerHTML = '<span>' + YS.esc(b.footer || '') + '</span><span class="fill"></span>' +
       (b.email ? '<a href="mailto:' + YS.esc(b.email) + '" dir="ltr">' + YS.esc(b.email) + '</a>' : '') +

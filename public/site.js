@@ -98,20 +98,22 @@
     var about = pages.filter(function (p) { return p.id === 'about'; })[0];
     var html = '';
     if (page.home) {
-      html += '<div class="home"><aside class="who">' +
-        '<h1>' + esc(b.name) + '</h1>' + (b.title ? '<p class="motto">' + esc(b.title) + '</p>' : '') +
+      // דף הבית (31/10/2026: "משהו דינאמי ונושם יותר"): בלי כרטיסים ובלי התמונה; הסמל, השם, והתחומים כעיגולים צפים בגל
+      var areas = pages.filter(function (p) { return !p.home && p !== about; });
+      html += '<section class="hero"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span>' +
         (b.logo ? '<img class="logo" src="' + esc(fileUrl(b.logo)) + '" alt="">' : '') +
-        (b.photo ? '<img class="portrait" src="' + esc(fileUrl(b.photo)) + '" alt="' + esc(b.name) + '">' : '') +
-        (about ? '<a class="pill" href="#/' + esc(about.id) + '">' + esc(about.nav || about.title) + '</a>' : '') +
-        (b.phone ? '<a class="hand" href="tel:' + phoneDigits(b.phone) + '" dir="ltr">' + esc(b.phone) + '</a>' : '') +
-        (b.email ? '<a class="mail" href="mailto:' + esc(b.email) + '" dir="ltr">' + esc(b.email) + '</a>' : '') +
-        '</aside><section class="cards">' + pages.filter(function (p) { return !p.home && p !== about; }).map(function (p) {
-          var sum = String(p.summary || p.sub || '').split('\n').filter(Boolean).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
-          return '<a class="card" href="#/' + esc(p.id) + '">' + (p.icon ? '<img src="' + esc(fileUrl(p.icon)) + '" alt="">' : '') +
-            '<b>' + esc(p.nav || p.title) + '</b>' + sum + (p.hidden ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</a>';
-        }).join('') + '</section></div>';
+        '<h1>' + esc(b.name) + '</h1>' + (b.title ? '<p class="motto">' + esc(b.title) + '</p>' : '') +
+        (b.tagline ? '<p class="tagline">' + esc(b.tagline) + '</p>' : '') + '</section>';
+      html += '<section class="areas">' + areas.map(function (p, i) {
+        var sum = String(p.summary || p.sub || '').split('\n').filter(Boolean).map(function (l) { return '<span>' + esc(l) + '</span>'; }).join('');
+        return '<a class="area c' + (i % 3) + '" style="--i:' + i + '" href="#/' + esc(p.id) + '">' +
+          '<span class="orb">' + (p.icon ? '<img src="' + esc(fileUrl(p.icon)) + '" alt="">' : '') + '</span>' +
+          '<b>' + esc(p.nav || p.title) + '</b><span class="sum">' + sum + '</span>' + (p.hidden ? '<span class="draft-tag">דף מוסתר</span>' : '') + '</a>';
+      }).join('') + '</section>';
       if (page.intro) html += '<section class="intro rich">' + rich(page.intro) + '</section>';
       if (items.length) html += '<div class="items">' + items.map(function (it) { return item(it, opt); }).join('') + '</div>';
+      html += '<p class="reach">' + (b.phone ? '<a class="hand" href="tel:' + phoneDigits(b.phone) + '" dir="ltr">' + esc(b.phone) + '</a>' : '') +
+        (b.email ? '<a class="mail" href="mailto:' + esc(b.email) + '" dir="ltr">' + esc(b.email) + '</a>' : '') + '</p>';
       return html;
     }
     var pic = page.id === 'about' && b.photo ? '<img class="head-photo" src="' + esc(fileUrl(b.photo)) + '" alt="">' : '';

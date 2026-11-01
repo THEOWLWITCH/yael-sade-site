@@ -101,7 +101,6 @@ export async function handle(req, { asset, getSite, base }) {
   if (path === '/robots.txt') {
     return new Response(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin.html\nDisallow: /api/\n\nSitemap: ${base}/sitemap.xml\n`, { headers: { 'content-type': 'text/plain; charset=utf-8' } });
   }
-  if (path === '/admin') return new Response(null, { status: 301, headers: { location: '/admin.html' } });
   const [shell, dataJs, siteJs, saved] = await Promise.all([asset('shell.html'), asset('site-data.js'), asset('site.js'), getSite().catch(() => null)]);
   const { YS, DEFAULT } = loadRenderer(dataJs, siteJs);
   const site = saved && saved.pages && saved.pages.length ? saved : DEFAULT;
@@ -138,4 +137,9 @@ export default async (req) => {
 };
 
 // preferStatic: קבצים קיימים (תמונות, admin.html, הסגנון) מוגשים כרגיל; כל השאר עובר כאן
-export const config = { path: ['/', '/:page', '/sitemap.xml', '/robots.txt'], preferStatic: true };
+// הניהול, הקבצים והתמונות לא עוברים כאן בכלל (01/11/2026: "אני לא מצליחה להכנס אל אזור הניהול")
+export const config = {
+  path: ['/', '/:page', '/sitemap.xml', '/robots.txt'],
+  excludedPath: ['/admin', '/admin.html', '/api/*', '/img/*', '/*.html', '/*.js', '/*.css', '/*.webp', '/*.png', '/*.ico'],
+  preferStatic: true,
+};

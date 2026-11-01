@@ -39,7 +39,7 @@
   // קישור לניהול רק במכשיר שנכנס לניהול (31/10/2026: "הקישור לניהול יהיה מתוך התפריט ורק אני אראה אותו")
   var adminLink = function () {
     var t = ''; try { t = localStorage.getItem('ys.admin.token') || sessionStorage.getItem('ys.admin.token') || ''; } catch (e) {}
-    return t ? '<a class="adm" href="/admin">⚙ ניהול</a>' : '';
+    return t ? '<a class="adm" href="/admin.html">⚙ ניהול</a>' : '';
   };
   var current = function () { return decodeURIComponent((location.pathname.match(/^\/([\w-]+)/) || [])[1] || ''); };
 

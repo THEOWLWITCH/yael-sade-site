@@ -11,10 +11,12 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
+# /admin מציג את הניהול בלי הפניה (בלי סכנה ללולאת הפניות)
 [[redirects]]
   from = "/admin"
   to = "/admin.html"
-  status = 301
+  status = 200
+  force = true
 
 [[headers]]
   for = "/*"

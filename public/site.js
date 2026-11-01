@@ -114,6 +114,9 @@
       }).join('') + '</section>';
       if (page.intro) html += '<section class="intro rich">' + rich(page.intro) + '</section>';
       if (items.length) html += '<div class="items">' + items.map(function (it) { return item(it, opt); }).join('') + '</div>';
+      // הלוגו של Begood וקישור למערכת, מעל המייל והטלפון (01/11/2026). ריק בניהול = בלי
+      var bgUrl = b.begood === undefined ? 'https://be-good.co.il/' : b.begood;
+      if (bgUrl) html += '<a class="begood" href="' + esc(bgUrl) + '" target="_blank" rel="noopener"><img src="/img/begood-logo.webp" alt="Begood: להיות מוכנים לאתגרי החיים" width="320" height="175"><span>למערכת Begood ←</span></a>';
       html += '<p class="reach">' + (b.phone ? '<a class="hand" href="tel:' + phoneDigits(b.phone) + '" dir="ltr">' + esc(b.phone) + '</a>' : '') +
         (b.email ? '<a class="mail" href="mailto:' + esc(b.email) + '" dir="ltr">' + esc(b.email) + '</a>' : '') + '</p>';
       return html;

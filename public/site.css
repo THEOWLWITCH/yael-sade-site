@@ -59,6 +59,12 @@ main{position:relative;z-index:0;overflow-x:clip;padding:40px 24px 64px;min-heig
 .area .sum{display:flex;flex-direction:column;font-size:1.04rem;line-height:1.55;color:var(--muted)}
 .area:hover .orb img,.area:focus-visible .orb img{transform:scale(1.07) rotate(-3deg)}
 .area:hover .orb::before,.area:focus-visible .orb::before{opacity:.95;transform:scale(1.12)}
+.begood{display:flex;flex-direction:column;align-items:center;gap:6px;width:max-content;max-width:100%;margin:56px auto 0;text-decoration:none;color:var(--purple);transition:transform .3s}
+.begood img{width:min(400px,86vw);height:auto}
+.begood span{font-weight:600;font-size:1rem;border-bottom:1px solid transparent}
+.begood:hover{transform:translateY(-2px)}
+.begood:hover span{border-bottom-color:currentColor}
+.begood+.reach{margin-top:22px}
 .reach{display:flex;flex-wrap:wrap;justify-content:center;align-items:baseline;gap:6px 26px;margin:44px 0 0}
 .hand{font-family:"Gochi Hand",Assistant,cursive;font-size:1.7rem;letter-spacing:.12em;color:var(--purple);text-decoration:none}
 .mail{color:var(--purple);text-decoration:none;font-size:1.12rem}
